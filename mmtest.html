@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title></title>
+    <script type="text/javascript" src="util/glMatrix-0.9.5.min.js"></script>
+    <script type="text/javascript" src="util/webgl-debug.js"></script>
+    <script type="text/javascript" src="util/Stats.js"></script>
+    <script type="text/javascript" src="util/camera.js"></script>
+    <script type="text/javascript" src="webgl-utils.js"></script>
+    <script type="text/javascript" src="MMRenderer.js"></script>
+    <script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec2 vTextureCoord;
+
+    uniform sampler2D uSampler;
+
+    uniform vec3 uColor;
+
+    void main(void) {
+    vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+    gl_FragColor = textureColor;
+    }
+    </script>
+    <script id="fragment-simple" type="x-shader/x-fragment">
+        void main(void) {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+    </script>
+    <script id="vertex-simple" type="x-shader/x-vertex">
+        attribute vec3 vertexPosition;
+        uniform mat4 MVMatrix;
+        uniform mat4 PMatrix;
+
+        void main(void) {
+            gl_Position = PMatrix * MVMatrix * vec4(vertexPosition, 1.0);
+        }
+    </script>
+    <script id="fragment-texture" type="x-shader/x-fragment">
+        varying highp vec2 vtextureCoord;
+
+        uniform sampler2D uSampler;
+
+        void main(void) {
+            //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0)+vec4(0.0,0.0, vtextureCoord);
+            gl_FragColor = texture2D(uSampler, vtextureCoord);
+        }
+    </script>
+    <script id="vertex-texture" type="x-shader/x-vertex">
+        attribute vec3 vertexPosition;
+        attribute vec2 texCoord;
+        uniform mat4 MVMatrix;
+        uniform mat4 PMatrix;
+
+        varying highp vec2 vtextureCoord;
+
+        void main(void) {
+            gl_Position = PMatrix * MVMatrix * vec4(vertexPosition, 1.0);
+            vtextureCoord = texCoord;
+        }
+    </script>
+    <script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 vertexPosition;
+    attribute vec2 aTextureCoord;
+
+    uniform mat4 MVMatrix;
+    uniform mat4 PMatrix;
+
+    varying vec2 vTextureCoord;
+
+    void main(void) {
+    gl_Position = PMatrix * MVMatrix * vec4(vertexPosition, 1.0);
+    vTextureCoord = aTextureCoord;
+    }
+    </script>
+    <script type="text/javascript">
+        function init(){
+            function createObjects(num){
+                var posMat = mat4.create();
+                var xpos=0.0,ypos=0.0,zpos=0.0;
+
+                var geometry = [
+                        vec3.create([-2.0, 2.0, 0.0]),
+                        vec3.create([-2.0, -2.0, 0.0]),
+                        vec3.create([2.0, -2.0, 0.0]),
+                        vec3.create([2.0, 2.0, 0.0]),
+                ];
+                var elIndexes = [0,1,2,0,2,3];
+                var verts = new Float32Array(geometry.length*num*3);
+                var indices = new Uint16Array(elIndexes.length*num);
+                var vertsOffset = 0;
+                var asi = 0;
+
+                var newvertex = vec3.create();
+                for(var i= 0; i<num; i++){
+                    xpos = Math.random()*200.0;
+                    ypos = Math.random()*100.0;
+                    xpos *= (Math.random()>0.5) ? -1.0 : 1.0;
+                    ypos *= (Math.random()>0.5) ? -1.0 : 1.0;
+                    mat4.identity(posMat);
+                    mat4.translate(posMat,[xpos,ypos,zpos]);
+
+                    for(var j=0;j<geometry.length;j++){
+                        mat4.multiplyVec3(posMat,geometry[j],newvertex);
+                        verts[vertsOffset++] = newvertex[0];
+                        verts[vertsOffset++] = newvertex[1];
+                        verts[vertsOffset++] = newvertex[2];
+                    }
+
+                    for(var j=0;j<elIndexes.length;j++){
+                        indices[i*elIndexes.length+j] = elIndexes[j]+i*geometry.length;
+                    }
+
+                }
+                verts.itemSize = 3;
+                verts.numItems = elIndexes.length * num;
+                return {verts:verts,indices:indices,itemSize:3,numItems:elIndexes.length * num};
+            }
+            var renderer = new MMRenderer('testcanvas', {
+                shaders: {
+                    shader_fs: 'fragment-texture',
+                    shader_vs: 'vertex-texture'
+                },
+                onLoad: function(mm) {
+                    var stats = new Stats();
+                    var gl = mm.gl;
+
+                    mm.gl.getParameter(mm.gl.MAX_VERTEX_ATTRIBS);
+//                    mm.shaderProgram.setUniform('uColor', mm.PMatrix);
+
+                    document.body.appendChild(stats.domElement);
+
+                    gl.viewport(0,0, mm.gl.viewportWidth, mm.gl.viewportHeight);
+                    gl.clearColor(0.0,0.0,0.0,1);
+                    gl.clearDepth(1);
+                    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+                    gl.enable(gl.BLEND);
+                    gl.enable(gl.DEPTH_TEST);
+                    gl.depthFunc(gl.LEQUAL);
+
+
+                    fpscamera = new FPSCamera();
+                    fpscamera.position[2] = 2000;
+                    mm.shaderProgram.setUniform('PMatrix', mm.PMatrix);
+                    var objects = createObjects(20000);
+                    var objectbuffer = gl.createBuffer();
+                    gl.bindBuffer(gl.ARRAY_BUFFER, objectbuffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, objects.verts, gl.STATIC_DRAW);
+                    objectbuffer.itemSize = objects.itemSize;
+                    objectbuffer.numItems = objects.numItems;
+
+                    var indexbuffer = gl.createBuffer();
+                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indexbuffer);
+                    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, objects.indices,gl.STATIC_DRAW);
+                    console.log(objectbuffer.numItems);
+                    var asi = new Uint16Array(1);
+                    asi[0] = 65536;
+                    console.log(asi);
+                    var ise = new MMRenderBuffer();
+                    for(var i=0; i<100000;i++){
+                        ise.add(new MMMesh());
+                    }
+                    ise.setupBuffer(mm);
+                    var sampler = gl.getUniformLocation(mm.shaderProgram.program, 'uSampler');
+                    if(!sampler)
+                        alert('wtf');
+                    gl.uniform1i(sampler, 0.0);
+                    tick();
+                    function tick(){
+                        stats.begin();
+                        drawScene();
+                        stats.end();
+                        requestAnimFrame(tick);
+                    }
+                    var rotation = 0;
+                    function drawScene(){
+                        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+                        mat4.identity(mm.MVMatrix);
+                        mat4.multiply(mm.MVMatrix, fpscamera.getViewMat());
+                        mat4.rotateY(mm.MVMatrix, rotation);
+                        mm.shaderProgram.setUniform('MVMatrix', mm.MVMatrix);
+
+//                        mm.useBuffer('vertexPosition', objectbuffer);
+//                        gl.drawArrays(gl.TRIANGLES, 0, objectbuffer.numItems);
+//                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indexbuffer);
+//                        gl.drawElements(gl.TRIANGLES, objectbuffer.numItems, gl.UNSIGNED_SHORT,0);
+                        ise.drawBuffer(mm);
+                        rotation += 0.01;
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="init();">
+<canvas id="testcanvas" width="1050" height="600"></canvas>
+</body>
+</html>
