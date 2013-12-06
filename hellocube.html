@@ -17,6 +17,7 @@
 			attribute 	vec3 	vertices;
 			attribute  vec3	normals;
 			attribute  vec2    uvs;
+			attribute  float random;
 
 			varying    vec2    uv;
 			varying    float   light;
@@ -116,6 +117,7 @@
 
 				cube.transform.addRotation( 0.01, 0.005, 0.0025 );
                 cube.cameraInverse.value = camera.getViewMat();
+//                alert(cube.vertices.length);
 				cube.draw();
 			}
         </script>

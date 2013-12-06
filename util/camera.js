@@ -11,7 +11,7 @@ FPSCamera = function(listen_object) {
     this.pitch = 0;
     this.yaw = 0;
     this.movement_speed = 50;
-    this.rotation_speed = 2;
+    this.rotation_speed = 0.01;
     this.cameraMat = mat4.create();
     this.rotationMat = mat4.create();
     mat4.identity(this.rotationMat);
@@ -20,17 +20,20 @@ FPSCamera = function(listen_object) {
 
     this.pressedKeys = new Array(128);
 
+    yaw = this.yaw;
+    pitch = this.pitch;
+
     listen_object.addEventListener('mousedown', function(event){
         lastX=event.pageX;
         lastY=event.pageY;
     }, false);
     listen_object.addEventListener('mousemove', function(event){
-//        if(lastX && lastY){
-            this.yaw += (event.pageX -lastX)/width*self.rotation_speed,
-            this.pitch += (event.pageY-lastY)/height*self.rotation_speed;
+        if(lastX && lastY){
+            self.yaw -= (event.pageX -lastX)*self.rotation_speed,
+            self.pitch -= (event.pageY-lastY)*self.rotation_speed;
             lastX = event.pageX;
             lastY = event.pageY;
-//        }
+        }
     }, false);
     listen_object.addEventListener('mouseup', function(event){
         lastX=null;
