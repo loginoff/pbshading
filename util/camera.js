@@ -25,12 +25,12 @@ FPSCamera = function(listen_object) {
         lastY=event.pageY;
     }, false);
     listen_object.addEventListener('mousemove', function(event){
-        if(lastX && lastY){
-            self.doRotation((event.pageX -lastX)/width*self.rotation_speed,
-                (event.pageY-lastY)/height*self.rotation_speed);
+//        if(lastX && lastY){
+            this.yaw += (event.pageX -lastX)/width*self.rotation_speed,
+            this.pitch += (event.pageY-lastY)/height*self.rotation_speed;
             lastX = event.pageX;
             lastY = event.pageY;
-        }
+//        }
     }, false);
     listen_object.addEventListener('mouseup', function(event){
         lastX=null;
@@ -118,4 +118,8 @@ FPSCamera.prototype.getViewMat = function() {
     mat4.rotateY(this.cameraMat, this.yaw);
     mat4.rotateX(this.cameraMat, this.pitch);
     return mat4.inverse(this.cameraMat);
+}
+
+FPSCamera.prototype.setPosition = function(x,y,z){
+    this.position = vec3.create([x,y,z]);
 }

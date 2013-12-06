@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>GLOW - Hello Cube - Please Check Source</title>
+		<meta charset="utf-8">
+        <script type="text/javascript" src="GLOW/build/custom/GLOWCore.js"></script>
+		<script type="text/javascript" src="GLOW/build/custom/GLOWCoreMath.js"></script>
+		<script type="text/javascript" src="GLOW/build/custom/GLOWExtras.js"></script>
+		<script type="text/javascript" src="GLOW/build/custom/GLOWThreeCompatibility.js"></script>
+        <script type="text/javascript" src="util/webgl-utils.js"></script>
+        <script type="text/javascript" src="util/glMatrix-0.9.5.min.js"></script>
+        <script type="text/javascript" src="util/camera.js"></script>
+        <script id="vertex-default" type="x-shader/x-vertex">
+            uniform	mat4 	transform;
+			uniform 	mat4 	cameraInverse;
+			uniform 	mat4 	cameraProjection;
+			attribute 	vec3 	vertices;
+			attribute  vec3	normals;
+			attribute  vec2    uvs;
+
+			varying    vec2    uv;
+			varying    float   light;
+
+			void main(void)
+			{
+				uv = uvs;
+				light = dot( normalize( mat3( transform[0].xyz, transform[1].xyz, transform[2].xyz ) * normals ), vec3( 0.0, 0.0, 1.0 ));
+				gl_Position = cameraProjection * cameraInverse * transform * vec4( vertices, 1.0 );
+			}
+        </script>
+
+        <script id="fragment-default" type="x-shader/x-fragment">
+            #ifdef GL_ES
+			precision highp float;
+			#endif
+
+			uniform 	sampler2D 	texture;
+			varying    float  	 	light;
+			varying 	vec2		uv;
+
+			void main( void )
+			{
+				gl_FragColor = texture2D( texture, uv ) * light;
+			}
+        </script>
+        <script type="text/javascript">
+            function getShaderCode(id){
+                var shaderScript = document.getElementById(id);
+                if (!shaderScript) {
+                    return null;
+                }
+
+                var str = "";
+                var k = shaderScript.firstChild;
+                while (k) {
+                    if (k.nodeType == 3) {
+                        str += k.textContent;
+                    }
+                    k = k.nextSibling;
+                }
+                return str;
+            }
+
+            // To get GLOW going, you need to create a GLOW.Context
+			// We also set the background color to white
+            var context = new GLOW.Context( { clear: { red: 1, green: 1, blue: 1 } } );
+            var cube;
+            var camera;
+
+            function start(){
+                init();
+                animate();
+            }
+
+            function animate() {
+				render();
+                requestAnimFrame( animate );
+            }
+
+            function init(){
+                var container = document.getElementById( "container" );
+			    container.appendChild( context.domElement );
+
+                var cubeShaderInfo = {
+                    vertexShader: getShaderCode('vertex-default'),
+                    fragmentShader: getShaderCode('fragment-default'),
+                    data: {
+                        // create uniform data
+                        transform: new GLOW.Matrix4(),
+                        cameraInverse: GLOW.defaultCamera.inverse,
+                        cameraProjection: GLOW.defaultCamera.projection,
+                        texture: new GLOW.Texture( { url:"star.gif" } ),
+
+                        // create attribute data
+                        vertices: GLOW.Geometry.Cube.vertices( 500 ),
+                        uvs: GLOW.Geometry.Cube.uvs(),
+                        normals: GLOW.Geometry.faceNormals( GLOW.Geometry.Cube.vertices(), GLOW.Geometry.Cube.indices())
+                    },
+
+                    // create element data
+                    indices: GLOW.Geometry.Cube.indices(),
+                    primitives: GLOW.Geometry.Cube.primitives()
+			    }
+                cube = new GLOW.Shader( cubeShaderInfo );
+
+                GLOW.defaultCamera.localMatrix.setPosition( 0, 0, 1500 );
+			    GLOW.defaultCamera.update();
+                camera = new FPSCamera();
+                camera.setPosition(0,0,1500);
+            }
+
+            function render() {
+				// clear the context's cache and graphics
+				context.cache.clear();
+				context.clear();
+
+				cube.transform.addRotation( 0.01, 0.005, 0.0025 );
+                cube.cameraInverse.value = camera.getViewMat();
+				cube.draw();
+			}
+        </script>
+
+	</head>
+	<body onload="start()">
+		<div id="container"></div>
+	</body>
+</html>
