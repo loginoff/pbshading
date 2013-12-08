@@ -3,13 +3,17 @@
 	<head>
 		<title>GLOW - Hello Cube - Please Check Source</title>
 		<meta charset="utf-8">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="GLOW/build/custom/GLOWCore.js"></script>
 		<script type="text/javascript" src="GLOW/build/custom/GLOWCoreMath.js"></script>
 		<script type="text/javascript" src="GLOW/build/custom/GLOWExtras.js"></script>
+        <script type="text/javascript" src="three.js"></script>
 		<script type="text/javascript" src="GLOW/build/custom/GLOWThreeCompatibility.js"></script>
+		<script type="text/javascript" src="OBJLoader.js"></script>
         <script type="text/javascript" src="util/webgl-utils.js"></script>
         <script type="text/javascript" src="util/glMatrix-0.9.5.min.js"></script>
         <script type="text/javascript" src="util/camera.js"></script>
+        <script type="text/javascript" src="Obj.js"></script>
         <script id="vertex-default" type="x-shader/x-vertex">
             uniform	mat4 	transform;
 			uniform 	mat4 	cameraInverse;
@@ -65,8 +69,20 @@
             // To get GLOW going, you need to create a GLOW.Context
 			// We also set the background color to white
             var context = new GLOW.Context( { clear: { red: 1, green: 1, blue: 1 } } );
-            var cube;
+            var scene = [];
             var camera;
+            var threejsMeshShader = {
+                vertexShader: getShaderCode('vertex-default'),
+                fragmentShader: getShaderCode('fragment-default'),
+                data: {
+                    transform: "matrixWorld",
+                    cameraInverse: GLOW.defaultCamera.inverse,
+                    cameraProjection: GLOW.defaultCamera.projection,
+                    vertices: "vertices",
+                    colors: "colors"
+                },
+                elements: "setByCode"
+            }
 
             function start(){
                 init();
@@ -108,6 +124,7 @@
 			    GLOW.defaultCamera.update();
                 camera = new FPSCamera();
                 camera.setPosition(0,0,1500);
+                initObjects();
             }
 
             function render() {
@@ -120,6 +137,18 @@
 //                alert(cube.vertices.length);
 				cube.draw();
 			}
+
+            function initObjects() {
+                $.ajax({
+                    url:'aff.obj',
+                    type: 'GET',
+                    dataType: 'text',
+                    success: function(data){
+                        var asi = readOBJ(data);
+                        alert(asi);
+                    }
+                });
+            }
         </script>
 
 	</head>

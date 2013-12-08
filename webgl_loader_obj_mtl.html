@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - loaders - OBJ loader</title>
+		<title>three.js webgl - loaders - OBJ MTL loader</title>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 			body {
 				font-family: Monospace;
@@ -22,15 +23,18 @@
 			}
 			#info a, .button { color: #f00; font-weight: bold; text-decoration: underline; cursor: pointer }
 		</style>
-        <script src="three.min.js"></script>
-		<script src="MTLLoader.js"></script>
-		<script src="OBJMTLLoader.js"></script>
 	</head>
 
 	<body>
+		<div id="info">
+		<a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - OBJMTLLoader test
+		</div>
 
-		<!--<script src="js/Detector.js"></script>-->
-		<!--<script src="js/libs/stats.min.js"></script>-->
+		<script src="three.js"></script>
+
+		<script src="MTLLoader.js"></script>
+		<script src="OBJMTLLoader.js"></script>
+
 
 		<script>
 
@@ -49,45 +53,47 @@
 
 
 			function init() {
+
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-				camera.position.z = 10;
+				camera.position.z = 100;
 
 				// scene
+
 				scene = new THREE.Scene();
 
 				var ambient = new THREE.AmbientLight( 0x101030 );
 				scene.add( ambient );
 
 				var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-				directionalLight.position.set( 0, 0, 1 );
+				directionalLight.position.set( 0, 0, 1 ).normalize();
 				scene.add( directionalLight );
-
-				var texture = new THREE.Texture();
-
-//				var loader = new THREE.ImageLoader();
-//				loader.load( 'star.gif', function ( image ) {
-//					texture.image = image;
-//					texture.needsUpdate = true;
-//				} );
 
 				// model
 
 				var loader = new THREE.OBJMTLLoader();
-                loader.addEventListener('load', function(event){
-                    var object = event.content;
-//                    object.position.z = -10;
-                    scene.add(object);
-                });
-				loader.load('aff.obj', 'aff.mtl');
+				loader.addEventListener( 'load', function ( event ) {
+
+					var object = event.content;
+
+					object.position.y = - 80;
+					scene.add( object );
+
+				});
+				loader.load( 'aff.obj', 'aff.mtl' );
+
+				//
 
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+				//
+
 				window.addEventListener( 'resize', onWindowResize, false );
 
 			}
@@ -105,9 +111,9 @@
 			}
 
 			function onDocumentMouseMove( event ) {
-//
-//				mouseX = ( event.clientX - windowHalfX ) / 2;
-//				mouseY = ( event.clientY - windowHalfY ) / 2;
+
+				mouseX = ( event.clientX - windowHalfX ) / 2;
+				mouseY = ( event.clientY - windowHalfY ) / 2;
 
 			}
 
