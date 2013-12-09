@@ -16,21 +16,22 @@
         <script type="text/javascript" src="Obj.js"></script>
         <script id="vertex-default" type="x-shader/x-vertex">
             uniform	mat4 	transform;
+            uniform mat3    normalMatrix;
 			uniform 	mat4 	cameraInverse;
 			uniform 	mat4 	cameraProjection;
 			attribute 	vec3 	vertices;
 			attribute  vec3	normals;
-			attribute  vec2    uvs;
-			attribute  float random;
 
 			varying    vec2    uv;
 			varying    float   light;
+			varying    vec3 vertex_pos;
+			varying    vec3 normal;
 
 			void main(void)
 			{
-				uv = uvs;
-				light = dot( normalize( mat3( transform[0].xyz, transform[1].xyz, transform[2].xyz ) * normals ), vec3( 0.0, 0.0, 1.0 ));
 				gl_Position = cameraProjection * cameraInverse * transform * vec4( vertices, 1.0 );
+				vertex_pos = vec3(cameraInverse * transform * vec4(vertices,1.0));
+				normal = normalMatrix * normals;
 			}
         </script>
 
@@ -50,18 +51,29 @@
 			}
         </script>
         <script id="fragment-phong" type="x-shader/x-fragment">
+            #ifdef GL_ES
+			precision highp float;
+			#endif
+
+            varying vec3  vertex_pos;
             vec3 light_pos;
             vec3 viewer;
-            vec3 lighting(vec3 vertex_pos, vec3 normal, vec3 viewer_pos, Material material) {
-                vec3 l = light.pos - vertex_pos;
-                float d = length(l);
-                l = normalize(l);
-                vec3 v = normalize(viewer_pos - vertex_pos);
-                vec3 h = normalize((l + v)/2.0);
-                float c_diffuse = max(0.0, dot(normal, l));
-                float c_specular = pow(max(0.0, dot(normal, h)), material.shininess);
-                float attenuation = 1.0/(light.constantAttenuation + pow(d, light.quadraticAttenuation));
-                return attenuation*(c_diffuse*material.diffuse + c_specular*material.specular);
+
+    //        vec3 lighting(vec3 vertex_pos, vec3 normal, vec3 viewer_pos, Material material) {
+    //            vec3 l = light.pos - vertex_pos;
+    //            float d = length(l);
+    //            l = normalize(l);
+    //            vec3 v = normalize(viewer_pos - vertex_pos);
+    //            vec3 h = normalize((l + v)/2.0);
+    //            float c_diffuse = max(0.0, dot(normal, l));
+    //            float c_specular = pow(max(0.0, dot(normal, h)), material.shininess);
+    //            float attenuation = 1.0/(light.constantAttenuation + pow(d, light.quadraticAttenuation));
+    //            return attenuation*(c_diffuse*material.diffuse + c_specular*material.specular);
+
+    //        }
+            void main( void )
+            {
+                gl_FragColor = vec4(0.7,0.5,0.5,1.0);
             }
         </script>
         <script type="text/javascript">
@@ -88,18 +100,15 @@
             var scene = [];
             var camera;
             var aff;
-            var threejsMeshShader = {
+            var compiledShaderInfo = {
                 vertexShader: getShaderCode('vertex-default'),
-                fragmentShader: getShaderCode('fragment-default'),
+                fragmentShader: getShaderCode('fragment-phong'),
                 data: {
-                    transform: "matrixWorld",
                     cameraInverse: GLOW.defaultCamera.inverse,
                     cameraProjection: GLOW.defaultCamera.projection,
-                    vertices: "vertices",
-                    colors: "colors"
                 },
-                elements: "setByCode"
             }
+            var compiledShader;
 
             function start(){
                 init();
@@ -152,7 +161,7 @@
                     primitives: GL.TRIANGLES
 			    }
 
-                cube = new GLOW.Shader( cubeShaderInfo );
+                compiledShader = new GLOW.Compiler.compile(compiledShaderInfo);
 
                 GLOW.defaultCamera.localMatrix.setPosition( 0, 0, 1500 );
 			    GLOW.defaultCamera.update();
@@ -166,14 +175,26 @@
 				context.cache.clear();
 				context.clear();
 
-				cube.transform.addRotation( 0.01, 0.005, 0.0025 );
-                cube.cameraInverse.value = camera.getViewMat();
+//				cube.transform.addRotation( 0.01, 0.005, 0.0025 );
+                compiledShader.cameraInverse.value = camera.getViewMat();
 //                alert(cube.vertices.length);
 //				cube.draw();
-                aff.draw();
+                for(obj in scene){
+                    obj.draw();
+                }
 			}
 
             function initObjects() {
+                var MVMatrix = new GLOW.Matrix4();
+                MVMatrix.addRotation(0.0, 90.0, 0.0);
+
+                //setup the normal matrix from the transformation matrix
+                var normalMatrix = MVMatrix.clone();
+                normalMatrix.invert();
+                normalMatrix.transpose();
+                var nMatrix = new GLOW.Matrix3();
+                nMatrix.extractFromMatrix4(normalMatrix);
+
                 $.ajax({
                     url:'aff.obj',
                     type: 'GET',
@@ -182,12 +203,18 @@
                     success: function(data){
                         var asi = readOBJ(data);
                         for (i in asi){
-                            console.log(asi[i].vertices);
-                            affShaderInfo.data.vertices = asi[i].vertices;
-                            affShaderInfo.data.normals = asi[i].normals;
-                            affShaderInfo.indices = asi[i].faces;
-                            affShaderInfo.data.uvs = asi[i].UVs;
-                            aff = new GLOW.Shader(affShaderInfo);
+                            var obj = new GLOW.Shader({
+                                use: compiledShader,
+                                except: {
+                                    transform: MVMatrix,
+                                    normalMatrix: nMatrix,
+                                    vertices: asi[i].vertices,
+                                    normals: asi[i].normals,
+                                    indices: asi[i].faces,
+                                    uvs: asi[i].UVs,
+                                }
+                            });
+                            scene.push(obj);
                         }
                     }
                 });
