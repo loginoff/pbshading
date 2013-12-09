@@ -19,6 +19,7 @@ function readOBJ ( str_obj ) {
             cur_obj.numVertices = 0;
             cur_obj.numNormals = 0;
             cur_obj.numUVs = 0;
+            cur_obj.numFaces = 0;
             cur_obj.name = row.substr(2,row.length);
             objects[cur_obj.name] = cur_obj;
         }
@@ -31,6 +32,9 @@ function readOBJ ( str_obj ) {
         if(cur_obj && str_val == 'vt'){
             cur_obj.numUVs++;
         }
+        if(cur_obj && str_val == 'f '){
+            cur_obj.numFaces++;
+        }
     }
     for(obj in objects){
         cur_obj = objects[obj];
@@ -41,14 +45,50 @@ function readOBJ ( str_obj ) {
         if(cur_obj.numUVs){
             cur_obj.UVs = new Float32Array(cur_obj.numUVs*2);
         }
+        if(cur_obj.numFaces){
+            cur_obj.faces = new Uint16Array(cur_obj.numFaces*3);
+        }
     }
 
     cur_obj = undefined;
     var ivert = 0;
     var iuv = 0;
     var inormal = 0;
+    var iface = 0;
     for (i = 0; i < length; i++) {
+        var row = arr_rows[i];
+        if ( row === undefined ) continue;
+		if ( row.length === 0 ) continue;
 
+        var val = row.substr(0,2);
+        if(val == 'o '){
+            cur_obj = objects[row.substr(2,row.length)];
+            ivert = iuv = inormal = 0;
+        }
+        if(val == 'v '){
+            var coords = row.split(' ');
+            cur_obj.vertices[ivert++] = coords[1];
+            cur_obj.vertices[ivert++] = coords[2];
+            cur_obj.vertices[ivert++] = coords[3];
+        }
+        if(val == 'vt'){
+            var coords = row.split(' ');
+            cur_obj.UVs[iuv++] = coords[1];
+            cur_obj.UVs[iuv++] = coords[2];
+        }
+        if(val == 'vn'){
+            var coords = row.split(' ');
+            cur_obj.normals[inormal++] = coords[1];
+            cur_obj.normals[inormal++] = coords[2];
+            cur_obj.normals[inormal++] = coords[3];
+        }
+        if(val == 'f '){
+            var coords = row.split(' ');
+            for(var j = 1; j < coords.length; j++){
+                var indices = coords[j].split('/');
+                cur_obj.faces[iface++] = indices[0]-1;
+            }
+        }
     }
 	
 	for ( i = 0; i < length; i++ ) {
@@ -109,6 +149,6 @@ function readOBJ ( str_obj ) {
 		}
 		/**/
 	}
-    return { 'vertices' : vertices,	'indices' : faces };
+    return objects;
     //return { 'vertices' : vertices,	'indices' : faces,	'texture' : normals,	'texCoords' : texCoords };
 }

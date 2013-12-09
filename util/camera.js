@@ -10,7 +10,7 @@ FPSCamera = function(listen_object) {
 
     this.pitch = 0;
     this.yaw = 0;
-    this.movement_speed = 50;
+    this.movement_speed = 1;
     this.rotation_speed = 0.01;
     this.cameraMat = mat4.create();
     this.rotationMat = mat4.create();
