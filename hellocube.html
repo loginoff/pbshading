@@ -19,18 +19,21 @@
             uniform mat3    normalMatrix;
 			uniform 	mat4 	cameraInverse;
 			uniform 	mat4 	cameraProjection;
-			attribute 	vec3 	vertices;
+			uniform     vec3 light_pos;
+
+			attribute  vec3 vertices;
 			attribute  vec3	normals;
 
-			varying    vec2    uv;
-			varying    float   light;
+			varying    vec2 uv;
 			varying    vec3 vertex_pos;
 			varying    vec3 normal;
+			varying    vec3 plight_pos;
 
 			void main(void)
 			{
 				gl_Position = cameraProjection * cameraInverse * transform * vec4( vertices, 1.0 );
 				vertex_pos = vec3(cameraInverse * transform * vec4(vertices,1.0));
+				plight_pos = vec3(cameraInverse * transform * vec4(light_pos,1.0));
 				normal = normalMatrix * normals;
 			}
         </script>
@@ -55,25 +58,28 @@
 			precision highp float;
 			#endif
 
-            varying vec3  vertex_pos;
-            vec3 light_pos;
-            vec3 viewer;
+            varying vec3 normal;
+            varying vec3 vertex_pos;
+            varying vec3 plight_pos;
 
-    //        vec3 lighting(vec3 vertex_pos, vec3 normal, vec3 viewer_pos, Material material) {
-    //            vec3 l = light.pos - vertex_pos;
-    //            float d = length(l);
-    //            l = normalize(l);
-    //            vec3 v = normalize(viewer_pos - vertex_pos);
-    //            vec3 h = normalize((l + v)/2.0);
-    //            float c_diffuse = max(0.0, dot(normal, l));
-    //            float c_specular = pow(max(0.0, dot(normal, h)), material.shininess);
-    //            float attenuation = 1.0/(light.constantAttenuation + pow(d, light.quadraticAttenuation));
-    //            return attenuation*(c_diffuse*material.diffuse + c_specular*material.specular);
-
-    //        }
+            vec3 lighting(vec3 vertex_pos, vec3 normal, vec3 light_pos) {
+                vec3 diffuse = vec3(0.5,0.5,0.5);
+                vec3 specular = vec3(1.0,1.0,1.0);
+                vec3 l = light_pos - vertex_pos;
+                float d = length(l);
+                l = normalize(l);
+                vec3 v = normalize(vec3(0.0,0.0,1.0)-vertex_pos);
+                vec3 h = normalize((l + v)/2.0);
+                float c_diffuse = max(0.0, dot(normal, l));
+                float c_specular = pow(max(0.0, dot(normal, h)), 20.0);
+                //float attenuation = 1.0/(light.constantAttenuation + pow(d, light.quadraticAttenuation));
+                float attenuation = 1.0;
+                return attenuation*(c_diffuse*diffuse + c_specular*specular);
+            }
             void main( void )
             {
-                gl_FragColor = vec4(0.7,0.5,0.5,1.0);
+                gl_FragColor = vec4(lighting(vertex_pos,normalize(normal),plight_pos),1.0);
+                //gl_FragColor = vec4(normal,1.0);
             }
         </script>
         <script type="text/javascript">
@@ -99,15 +105,6 @@
             var context = new GLOW.Context( { clear: { red: 1, green: 1, blue: 1 } } );
             var scene = [];
             var camera;
-            var aff;
-            var compiledShaderInfo = {
-                vertexShader: getShaderCode('vertex-default'),
-                fragmentShader: getShaderCode('fragment-phong'),
-                data: {
-                    cameraInverse: GLOW.defaultCamera.inverse,
-                    cameraProjection: GLOW.defaultCamera.projection,
-                },
-            }
             var compiledShader;
 
             function start(){
@@ -124,44 +121,17 @@
                 var container = document.getElementById( "container" );
 			    container.appendChild( context.domElement );
 
-                cubeShaderInfo = {
-                    vertexShader: getShaderCode('vertex-default'),
-                    fragmentShader: getShaderCode('fragment-default'),
-                    data: {
-                        // create uniform data
-                        transform: new GLOW.Matrix4(),
-                        cameraInverse: GLOW.defaultCamera.inverse,
-                        cameraProjection: GLOW.defaultCamera.projection,
-                        texture: new GLOW.Texture( { url:"star.gif" } ),
-
-                        // create attribute data
-                        vertices: GLOW.Geometry.Cube.vertices( 5 ),
-                        uvs: GLOW.Geometry.Cube.uvs(),
-                        normals: GLOW.Geometry.faceNormals( GLOW.Geometry.Cube.vertices(), GLOW.Geometry.Cube.indices())
-                    },
-
-                    // create element data
-                    indices: GLOW.Geometry.Cube.indices(),
-                    primitives: GLOW.Geometry.Cube.primitives()
-			    }
-                affShaderInfo = {
-                    vertexShader: getShaderCode('vertex-default'),
-                    fragmentShader: getShaderCode('fragment-default'),
-                    data: {
-                        // create uniform data
-                        transform: new GLOW.Matrix4(),
-                        cameraInverse: GLOW.defaultCamera.inverse,
-                        cameraProjection: GLOW.defaultCamera.projection,
-                        texture: new GLOW.Texture( { url:"star.gif" } ),
-
-                        // create attribute data
-                    },
-
-                    // create element data
-                    primitives: GL.TRIANGLES
-			    }
-
-                compiledShader = new GLOW.Compiler.compile(compiledShaderInfo);
+//                compiledShader = new GLOW.Compiler.compile({
+//                    vertexShader: getShaderCode('vertex-default'),
+//                    fragmentShader: getShaderCode('fragment-phong'),
+//                    data: {
+//                        cameraInverse: GLOW.defaultCamera.inverse,
+//                        cameraProjection: GLOW.defaultCamera.projection,
+//                        light_pos: new GLOW.Vector3(0.5,0.5,0.5),
+//                        normals: new Float32Array(9),
+//                        vertices: new Float32Array(9)
+//                    },
+//                });
 
                 GLOW.defaultCamera.localMatrix.setPosition( 0, 0, 1500 );
 			    GLOW.defaultCamera.update();
@@ -176,11 +146,13 @@
 				context.clear();
 
 //				cube.transform.addRotation( 0.01, 0.005, 0.0025 );
-                compiledShader.cameraInverse.value = camera.getViewMat();
+//                compiledShader.cameraInverse.value = camera.getViewMat();
 //                alert(cube.vertices.length);
 //				cube.draw();
-                for(obj in scene){
-                    obj.draw();
+                for(var i = 0; i < scene.length; i++){
+                    scene[i].cameraInverse.value = camera.getViewMat();
+//                    scene[i].transform.addRotation(0.01,0.005,0.0025);
+                    scene[i].draw();
                 }
 			}
 
@@ -203,17 +175,32 @@
                     success: function(data){
                         var asi = readOBJ(data);
                         for (i in asi){
+//                            var obj = new GLOW.Shader({
+//                                use: compiledShader,
+//                                except: {
+//                                    transform: MVMatrix,
+//                                    normalMatrix: nMatrix,
+//                                    vertices: asi[i].vertices,
+//                                    normals: asi[i].normals,
+//                                    indices: asi[i].faces,
+//                                    uvs: asi[i].UVs,
+//                                }
+//                            });
                             var obj = new GLOW.Shader({
-                                use: compiledShader,
-                                except: {
+                                vertexShader: getShaderCode('vertex-default'),
+                                fragmentShader: getShaderCode('fragment-phong'),
+                                data: {
+                                    cameraInverse: GLOW.defaultCamera.inverse,
+                                    cameraProjection: GLOW.defaultCamera.projection,
+                                    light_pos: new GLOW.Vector3(0.0,2.0,0.0),
                                     transform: MVMatrix,
                                     normalMatrix: nMatrix,
                                     vertices: asi[i].vertices,
                                     normals: asi[i].normals,
-                                    indices: asi[i].faces,
                                     uvs: asi[i].UVs,
-                                }
-                            });
+                                },
+                                indices: asi[i].faces
+                        });
                             scene.push(obj);
                         }
                     }

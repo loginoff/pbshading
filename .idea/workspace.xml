@@ -2,13 +2,14 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$USER_HOME$/code/javascript/glow/hellocube.html" line="132" />
-    <bookmark url="file://$PROJECT_DIR$/hellocube.html" line="168" />
-    <bookmark url="file://$PROJECT_DIR$/hellocube.html" line="40" />
+    <bookmark url="file://$PROJECT_DIR$/hellocube.html" line="138" />
+    <bookmark url="file://$PROJECT_DIR$/hellocube.html" line="43" />
     <bookmark url="file://$PROJECT_DIR$/Obj.js" line="76" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e1d4e9b-6352-43b1-a9c8-6a16c252a985" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GLOW" afterPath="$PROJECT_DIR$/GLOW" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/aff.obj" afterPath="$PROJECT_DIR$/aff.obj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hellocube.html" afterPath="$PROJECT_DIR$/hellocube.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -33,10 +34,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="hellocube.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="hellocube.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hellocube.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="169" column="30" selection-start="6600" selection-end="6600" vertical-scroll-proportion="0.3877551" vertical-offset="2326" max-vertical-offset="3510">
+            <state line="154" column="36" selection-start="5910" selection-end="5910" vertical-scroll-proportion="-16.833334" vertical-offset="1906" max-vertical-offset="3315">
               <folding />
             </state>
           </provider>
@@ -54,10 +55,8 @@
       <file leaf-file-name="Node.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GLOW/src/extras/graph/Node.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="38" selection-start="388" selection-end="388" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1425">
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
+            <state line="16" column="38" selection-start="388" selection-end="388" vertical-scroll-proportion="0.0" vertical-offset="240" max-vertical-offset="1425">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -71,28 +70,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GLOWCore.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GLOW/build/custom/GLOWCore.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1037" column="25" selection-start="38681" selection-end="38682" vertical-scroll-proportion="0.0" vertical-offset="15380" max-vertical-offset="33330">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GLOWExtras.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GLOW/build/custom/GLOWExtras.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1002" column="22" selection-start="31061" selection-end="31061" vertical-scroll-proportion="0.0" vertical-offset="14855" max-vertical-offset="39090">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Obj.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Obj.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Obj.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="97" column="8" selection-start="2969" selection-end="2969" vertical-scroll-proportion="0.0" vertical-offset="225" max-vertical-offset="2400">
+            <state line="97" column="8" selection-start="2969" selection-end="2969" vertical-scroll-proportion="1.7193606" vertical-offset="487" max-vertical-offset="2400">
               <folding />
             </state>
           </provider>
@@ -366,7 +347,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="53" y="28" width="1400" height="1000" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -399,7 +380,9 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/objtest.html">
@@ -422,27 +405,6 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1785" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Obj.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="97" column="8" selection-start="2969" selection-end="2969" vertical-scroll-proportion="0.0" vertical-offset="225" max-vertical-offset="2400">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GLOW/build/custom/GLOWCore.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1037" column="25" selection-start="38681" selection-end="38682" vertical-scroll-proportion="0.0" vertical-offset="15380" max-vertical-offset="33330">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GLOW/build/custom/GLOWExtras.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1002" column="22" selection-start="31061" selection-end="31061" vertical-scroll-proportion="0.0" vertical-offset="14855" max-vertical-offset="39090">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/GLOW/src/extras/math/Matrix4.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="203" column="22" selection-start="8822" selection-end="8822" vertical-scroll-proportion="0.3321492" vertical-offset="2858" max-vertical-offset="7575" />
@@ -455,21 +417,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GLOW/src/extras/math/Vector4.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="197" selection-end="197" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1725">
-          <folding />
-        </state>
+        <state line="7" column="0" selection-start="197" selection-end="197" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1725" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GLOW/src/extras/math/Vector3.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3015">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3015" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/util/camera.js">
+    <entry file="file://$PROJECT_DIR$/GLOW/src/extras/graph/Camera.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="28" selection-start="509" selection-end="509" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2010">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-1.2784091" vertical-offset="675" max-vertical-offset="1215" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GLOW/src/extras/graph/Node.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="38" selection-start="388" selection-end="388" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1425">
           <folding />
         </state>
       </provider>
@@ -481,25 +444,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GLOW/src/extras/graph/Camera.js">
+    <entry file="file://$PROJECT_DIR$/GLOW/build/custom/GLOWExtras.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-1.2784091" vertical-offset="675" max-vertical-offset="1215">
+        <state line="324" column="0" selection-start="7389" selection-end="7389" vertical-scroll-proportion="-8.994545" vertical-offset="9807" max-vertical-offset="39090">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GLOW/src/extras/graph/Node.js">
+    <entry file="file://$PROJECT_DIR$/GLOW/build/custom/GLOWCore.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="38" selection-start="388" selection-end="388" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1425">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state line="1037" column="25" selection-start="38681" selection-end="38682" vertical-scroll-proportion="0.3181818" vertical-offset="15380" max-vertical-offset="33330">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/camera.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="28" selection-start="509" selection-end="509" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2010">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/hellocube.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="169" column="30" selection-start="6600" selection-end="6600" vertical-scroll-proportion="0.3877551" vertical-offset="2326" max-vertical-offset="3510">
+        <state line="154" column="36" selection-start="5910" selection-end="5910" vertical-scroll-proportion="-16.833334" vertical-offset="1906" max-vertical-offset="3315">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Obj.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="97" column="8" selection-start="2969" selection-end="2969" vertical-scroll-proportion="1.7193606" vertical-offset="487" max-vertical-offset="2400">
           <folding />
         </state>
       </provider>
